@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Xoşbəxt Ol · Admin paneli</title>
+  <style>
+    :root{
+      --bg:#f7f4ec;--paper:#fffdf8;--paper-2:#f1ecdf;--ink:#28241e;--muted:#7a7164;
+      --brand:#74582e;--brand-2:#a58955;--line:#ded7ca;--green:#34724b;--green-bg:#dff2e3;
+      --red:#a34242;--red-bg:#f8dede;--amber:#86621f;--amber-bg:#f5e8bd;--shadow:0 13px 30px rgba(56,45,28,.10);
+      --sidebar:250px
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg)}
+    body{margin:0;color:var(--ink);font:14px/1.45 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+      radial-gradient(circle at 96% 10%,rgba(197,169,111,.10),transparent 26rem),var(--bg)}
+    button,input,select,textarea{font:inherit;color:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+    .icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+    .login-page{min-height:100vh;display:grid;place-items:center;padding:24px}
+    .login-card{width:min(440px,100%);padding:36px;background:rgba(255,253,248,.94);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}
+    .login-mark{width:54px;height:54px;display:grid;place-items:center;border-radius:18px;background:var(--paper-2);color:var(--brand);margin-bottom:20px}
+    .login-card h1{font:700 30px Georgia,serif;margin:0 0 7px}
+    .login-card>p{color:var(--muted);margin:0 0 24px}
+    .field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;font-weight:750;color:#544b3e}
+    .field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;border:1px solid var(--line);border-radius:12px;background:#fffefa;padding:11px 13px;outline:none}
+    .field input:focus,.field select:focus,.field textarea:focus,.toolbar input:focus,.toolbar select:focus{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(165,137,85,.13)}
+    .error{color:var(--red);white-space:pre-wrap}.notice{color:var(--green)}
+    .btn{border:0;border-radius:12px;padding:10px 14px;background:var(--brand);color:white;font-weight:720;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+    .btn:hover{filter:brightness(.96)}.btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn.block{width:100%;margin-top:6px}.btn.secondary{background:#ede4d1;color:#604a25}.btn.ghost{background:transparent;color:var(--brand)}
+    .btn.danger{background:var(--red-bg);color:var(--red)}.btn.small{padding:7px 11px;border-radius:999px;font-size:12px}
+    .app-shell{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr)}
+    .sidebar{position:sticky;top:0;height:100vh;padding:28px 18px 20px;border-right:1px solid var(--line);background:rgba(250,248,242,.78);backdrop-filter:blur(14px);display:flex;flex-direction:column}
+    .logo{display:flex;align-items:center;gap:11px;padding:0 10px 28px;font:700 20px Georgia,serif}
+    .logo-badge{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:var(--brand);color:white}
+    .nav{display:grid;gap:5px}
+    .nav-btn{border:0;background:transparent;border-radius:14px;padding:12px 13px;display:flex;align-items:center;gap:11px;text-align:left;color:#4f473c}
+    .nav-btn:hover{background:#f1ebde}.nav-btn.active{background:#ebe4d5;color:#523b19;font-weight:750}
+    .nav-count{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--red);color:white;font-size:10px;font-weight:800;display:grid;place-items:center}
+    .sidebar-foot{margin-top:auto;padding:18px 10px 4px;color:var(--muted);font-size:11px}
+    .main{min-width:0;padding:30px clamp(22px,4vw,64px) 64px}
+    .topbar{height:52px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}
+    .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:4px}
+    .page-title{font:700 clamp(25px,3vw,34px) Georgia,serif;margin:0}.page-subtitle{color:var(--muted);margin:5px 0 0}
+    .top-actions{display:flex;align-items:center;gap:8px}
+    .circle-btn{width:39px;height:39px;border-radius:50%;border:1px solid var(--line);background:var(--paper);display:grid;place-items:center;color:var(--brand)}
+    .circle-btn.loading .icon{animation:spin .7s linear infinite}.notification-button{position:relative}.notification-dot{position:absolute;right:1px;top:1px;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:var(--red);color:white;font-size:9px;display:grid;place-items:center;border:2px solid var(--bg)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .admin-chip{display:flex;align-items:center;gap:9px;margin-left:5px}
+    .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#e7dcc6;color:#644a21;font:700 14px Georgia,serif}
+    .admin-name{font-weight:750;font-size:13px}.admin-role{font-size:11px;color:var(--muted)}
+    .section{display:none}.section.active{display:block}
+    .profile-strip{display:flex;align-items:center;gap:14px;padding:4px 0 24px}
+    .profile-strip .avatar{width:58px;height:58px;font-size:18px;box-shadow:0 7px 17px rgba(66,50,28,.15)}
+    .profile-strip strong{display:block;font-size:16px}.profile-strip span{color:var(--muted);font-size:12px}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:28px}
+    .stats.revenue-stats{grid-template-columns:repeat(3,minmax(0,1fr));margin:12px 0 14px}
+    .stat{min-height:120px;padding:18px;border:1px solid var(--line);border-radius:19px;background:rgba(255,253,248,.72);box-shadow:0 8px 18px rgba(55,43,26,.06)}
+    .stat-label{color:#5f564a;font-size:12px}.stat-value{font:700 28px Georgia,serif;margin:12px 0 3px}.stat-note{font-size:11px;color:var(--muted)}
+    .panel{margin-top:22px}.panel-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:11px}
+    .panel-head h2{font:700 21px Georgia,serif;margin:0}.panel-head p{color:var(--muted);margin:4px 0 0;font-size:12px}
+    .table-card{background:rgba(255,253,248,.76);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);overflow:hidden}
+    .table-scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+    th{font-size:11px;letter-spacing:.02em;color:#51483c;background:rgba(243,238,228,.62);font-weight:800}
+    td{font-size:12.5px}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:rgba(242,236,224,.46)}
+    .primary-cell{font-weight:720}.secondary-cell{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .pill{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:10.5px;font-weight:750;background:var(--paper-2);color:#5c4b2d;white-space:nowrap}
+    .pill.green{background:var(--green-bg);color:var(--green)}.pill.red{background:var(--red-bg);color:var(--red)}.pill.amber{background:var(--amber-bg);color:var(--amber)}
+    .toolbar{display:grid;grid-template-columns:minmax(180px,330px) 180px auto;gap:10px;margin:18px 0 12px}
+    .toolbar.audit-toolbar{grid-template-columns:minmax(180px,1fr) 170px 170px auto}
+    .toolbar .btn{justify-self:end}.empty{padding:35px;text-align:center;color:var(--muted)}
+    .toast{position:fixed;right:24px;bottom:24px;z-index:30;max-width:380px;background:#2f2a23;color:white;border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}
+    .toast.show{opacity:1;transform:none}.toast.bad{background:#833e3e}
+    dialog{width:min(920px,calc(100% - 28px));max-height:90vh;border:1px solid var(--line);border-radius:22px;padding:0;background:var(--paper);color:var(--ink);box-shadow:0 30px 90px rgba(25,20,14,.3)}
+    dialog::backdrop{background:rgba(33,28,21,.46);backdrop-filter:blur(3px)}
+    .dialog-body{padding:24px;max-height:90vh;overflow:auto}.dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+    .dialog-head h2{font:700 24px Georgia,serif;margin:0}.dialog-head p{margin:4px 0 0;color:var(--muted)}
+    .dialog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dialog-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}
+    .subcard{border:1px solid var(--line);border-radius:15px;padding:15px;margin:10px 0;background:#fffefa}
+    .info{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:7px 0;border-bottom:1px solid #ebe5da}.info:last-child{border-bottom:0}.info b{font-size:11px;color:var(--muted)}
+    .progress{height:8px;border-radius:10px;background:#ece5d8;overflow:hidden;margin:12px 0 5px}.progress i{display:block;height:100%;background:var(--brand-2)}
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}.gallery img,.gallery video{width:100%;height:150px;object-fit:cover;border-radius:12px;background:var(--paper-2)}
+    .gallery a{position:relative}.gallery span{position:absolute;left:8px;bottom:8px;padding:4px 7px;border-radius:8px;background:rgba(30,25,19,.72);color:white;font-size:10px}.detail-section{margin-top:22px}.detail-section>h3{font:700 18px Georgia,serif;margin:0 0 9px}.check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.check-item{padding:9px 11px;border-radius:11px;background:#f7f3e9;font-size:12px}.check-item.complete{color:var(--green);background:var(--green-bg)}.menu-list{margin:8px 0 0;padding-left:18px;color:#5e5549}.document-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.message-box{padding:17px;border-radius:16px;background:#f4eddf;border:1px solid #dfd1b7}.message-box textarea{min-height:100px;resize:vertical}.booking-reason{padding:14px;border-left:4px solid var(--red);border-radius:8px;background:var(--red-bg);white-space:pre-wrap}.pagination{display:flex;align-items:center;justify-content:center;gap:7px;padding:15px;border-top:1px solid var(--line)}.page-button{min-width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--brand)}.page-button.active{background:var(--brand);color:white;border-color:var(--brand)}.page-button:disabled{opacity:.4;cursor:not-allowed}.notification-item{padding:14px;border:1px solid var(--line);border-radius:14px;margin-top:9px}.notification-item.unread{border-left:4px solid var(--brand-2);background:#fbf6ea}.notification-item p{white-space:pre-wrap;color:#5d5448;margin:6px 0}.notification-item time{font-size:11px;color:var(--muted)}
+    .application-banner{padding:15px 17px;border-radius:16px;background:var(--amber-bg);color:var(--amber);border:1px solid #e8d597;margin-bottom:18px}.application-banner.new{background:var(--green-bg);color:var(--green);border-color:#bfdfc7}.application-banner strong{display:block;font-size:15px;margin-bottom:3px}.change-card{border:1px solid var(--line);border-left:4px solid var(--brand-2);border-radius:14px;padding:14px;margin:9px 0;background:#fffefa}.change-card.added{border-left-color:var(--green)}.change-card.removed{border-left-color:var(--red)}.change-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.change-badge{font-size:10px;font-weight:800;padding:4px 8px;border-radius:99px;background:var(--paper-2);color:var(--brand)}.change-card.added .change-badge{background:var(--green-bg);color:var(--green)}.change-card.removed .change-badge{background:var(--red-bg);color:var(--red)}
+    .mobile-menu{display:none}
+    @media(max-width:1000px){:root{--sidebar:210px}.main{padding-inline:24px}.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:760px){
+      .app-shell{display:block}.sidebar{position:sticky;height:auto;z-index:10;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line)}
+      .logo{padding:0}.logo span:last-child{display:none}.nav{display:none;grid-template-columns:1fr 1fr;margin-top:12px}.sidebar.open .nav{display:grid}.sidebar-foot{display:none}
+      .mobile-menu{display:grid;margin-left:auto}.main{padding:20px 14px 46px}.topbar{margin-bottom:20px}.admin-chip>div:not(.avatar){display:none}
+      .stats{grid-template-columns:1fr 1fr;gap:9px}.stat{min-height:106px;padding:14px}.stat-value{font-size:23px}
+      .stats.revenue-stats{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.toolbar .btn{justify-self:stretch}
+      .toolbar.audit-toolbar{grid-template-columns:1fr 1fr}.toolbar.audit-toolbar input[type=date]{grid-column:auto}
+      .dialog-grid{grid-template-columns:1fr}.info{grid-template-columns:1fr;gap:2px}.page-subtitle{display:none}
+    }
+  </style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.6 11 23l-9-9V3h11l7.6 7.6a2.1 2.1 0 0 1 0 3Z"/><circle cx="7.5" cy="8.5" r="1.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2 6M20 4v7h-7"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+</svg>
+
+<section id="login" class="login-page">
+  <form class="login-card" onsubmit="login(event)">
+    <div class="login-mark"><svg class="icon" style="width:28px;height:28px"><use href="#i-grid"/></svg></div>
+    <h1>Admin paneli</h1>
+    <p>Platformanı idarə etmək üçün admin hesabınızla daxil olun.</p>
+    <div class="field"><label for="email">Email ünvanı</label><input id="email" type="email" autocomplete="username" required placeholder="admin@example.com"></div>
+    <div class="field"><label for="password">Şifrə</label><input id="password" type="password" autocomplete="current-password" minlength="8" required placeholder="••••••••"></div>
+    <button class="btn block" type="submit">Daxil ol</button>
+    <p id="loginError" class="error" style="margin:13px 0 0"></p>
+  </form>
+</section>
+
+<div id="app" class="app-shell hidden">
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex;align-items:center">
+      <div class="logo"><span class="logo-badge"><svg class="icon"><use href="#i-grid"/></svg></span><span>Xoşbəxt Ol</span></div>
+      <button class="circle-btn mobile-menu" onclick="sidebar.classList.toggle('open')" aria-label="Menyunu aç"><svg class="icon"><use href="#i-menu"/></svg></button>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" data-page="overview" onclick="go('overview',this)"><svg class="icon"><use href="#i-grid"/></svg>Platformaya ümumi baxış</button>
+      <button class="nav-btn" data-page="users" onclick="go('users',this)"><svg class="icon"><use href="#i-users"/></svg>İstifadəçilər</button>
+      <button class="nav-btn" data-page="venues" onclick="go('venues',this)"><svg class="icon"><use href="#i-pin"/></svg>Məkanlar</button>
+      <button class="nav-btn" data-page="bookings" onclick="go('bookings',this)"><svg class="icon"><use href="#i-calendar"/></svg>Rezervasiyalar</button>
+      <button class="nav-btn" data-page="reviewReports" onclick="go('reviewReports',this)"><svg class="icon"><use href="#i-list"/></svg>Rəy şikayətləri<span id="reviewReportCount" class="nav-count hidden">0</span></button>
+      <button class="nav-btn" data-page="promos" onclick="go('promos',this)"><svg class="icon"><use href="#i-tag"/></svg>Promo kodlar</button>
+      <button class="nav-btn" data-page="audit" onclick="go('audit',this)"><svg class="icon"><use href="#i-list"/></svg>Audit tarixçəsi</button>
+    </nav>
+    <div class="sidebar-foot">Web idarəetmə paneli · v1.0</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">İdarəetmə mərkəzi</div><h1 class="page-title" id="pageTitle">Platformaya ümumi baxış</h1><p class="page-subtitle" id="pageSubtitle">Əsas göstəricilər və son fəaliyyətlər</p></div>
+      <div class="top-actions">
+        <button id="refreshButton" class="circle-btn" onclick="refreshCurrent(this)" aria-label="Yenilə"><svg class="icon"><use href="#i-refresh"/></svg></button>
+        <button class="circle-btn notification-button" onclick="openNotifications()" aria-label="Bildirişlər"><svg class="icon"><use href="#i-bell"/></svg><span id="notificationCount" class="notification-dot hidden">0</span></button>
+        <div class="admin-chip"><div class="avatar" id="topInitials">A</div><div><div class="admin-name" id="topName">Admin</div><div class="admin-role">Administrator</div></div></div>
+        <button class="circle-btn" onclick="logout()" aria-label="Çıxış"><svg class="icon"><use href="#i-log-out"/></svg></button>
+      </div>
+    </header>
+
+    <section id="overview" class="section active">
+      <div class="profile-strip"><div class="avatar" id="profileInitials">A</div><div><strong id="profileName">Admin</strong><span id="profileEmail">Platforma administratoru</span></div></div>
+      <div class="stats">
+        <article class="stat"><div class="stat-label">İstifadəçilər</div><div class="stat-value" id="statUsers">—</div><div class="stat-note">Qeydiyyatdan keçmiş hesablar</div></article>
+        <article class="stat"><div class="stat-label">Ödənilib</div><div class="stat-value" id="statPaid">—</div><div class="stat-note">AZN</div></article>
+        <article class="stat"><div class="stat-label">Refund</div><div class="stat-value" id="statRefunded">—</div><div class="stat-note">AZN geri ödənilib</div></article>
+        <article class="stat"><div class="stat-label">Gözləyən refund</div><div class="stat-value" id="statPendingRefund">—</div><div class="stat-note">Emal gözləyən sorğular</div></article>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Ay üzrə gəlir</h2><p>Restoranlardan toplanan rezerv haqları və geri ödənişlər</p></div><div class="field" style="margin:0;min-width:170px"><label for="revenueMonth">Ay</label><input id="revenueMonth" type="month" onchange="loadRevenue()"></div></div>
+        <div class="stats revenue-stats">
+          <article class="stat"><div class="stat-label">Toplanan</div><div class="stat-value" id="revenueCollected">—</div><div class="stat-note">Rezerv haqları, AZN</div></article>
+          <article class="stat"><div class="stat-label">Geri qaytarılan</div><div class="stat-value" id="revenueRefunded">—</div><div class="stat-note">Emal olunmuş refund, AZN</div></article>
+          <article class="stat"><div class="stat-label">Xalis məbləğ</div><div class="stat-value" id="revenueNet">—</div><div class="stat-note">Toplanan − geri qaytarılan, AZN</div></article>
+        </div>
+        <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Restoran</th><th>Rezerv sayı</th><th>Toplanan</th><th>Geri qaytarılan</th><th>Xalis</th></tr></thead><tbody id="revenueRows"></tbody></table></div></div>
+      </div>
+      <div class="panel"><div class="panel-head"><div><h2>Təsdiq gözləyən məkanlar</h2><p>Yoxlanılmalı yeni məkan müraciətləri</p></div><button class="btn ghost small" onclick="go('venues')">Bütün məkanlar</button></div><div class="table-card"><div class="table-scroll"><table><thead><tr><th>Məkan</th><th>Ünvan</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody id="overviewVenues"></tbody></table></div></div></div>
+    </section>
+
+    <section id="users" class="section">
+      <div class="toolbar"><input id="usersSearch" placeholder="Ad və ya email ilə axtar…" oninput="renderUsers()"><select id="usersRole" onchange="renderUsers()"><option value="">Bütün rollar</option><option>CUSTOMER</option><option>VENUE_OWNER</option><option>ADMIN</option></select><button class="btn secondary" onclick="loadUsers()">Yenilə</button></div>
+      <div class="table-card"><div class="table-scroll"><table><thead><tr><th>İstifadəçi</th><th>Rol</th><th>Status</th><th>Qeydiyyat</th><th>Əməliyyat</th></tr></thead><tbody id="usersRows"></tbody></table></div><div id="usersPagination" class="pagination"></div></div>
+    </section>
+
+    <section id="venues" class="section">
+      <div class="toolbar"><input id="venuesSearch" placeholder="Məkan və ya ünvan axtar…" oninput="renderVenues()"><select id="venuesStatus" onchange="loadVenues()"><option value="">Bütün statuslar</option><option value="PENDING">Təsdiq gözləyir</option><option value="ACTIVE">Aktiv</option><option value="REJECTED">Rədd edilib</option><option value="DRAFT">Qaralama</option><option value="SUSPENDED">Dayandırılıb</option></select><button class="btn secondary" onclick="loadVenues()">Yenilə</button></div>
+      <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Məkan</th><th>Ünvan</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody id="venuesRows"></tbody></table></div><div id="venuesPagination" class="pagination"></div></div>
+    </section>
+
+    <section id="bookings" class="section">
+      <div class="toolbar"><input id="bookingsSearch" placeholder="Nömrə, müştəri və ya məkan axtar…" oninput="renderBookings()"><select id="bookingsStatus" onchange="renderBookings()"><option value="">Bütün statuslar</option><option value="PENDING_PAYMENT">Ödəniş gözləyir</option><option value="PENDING_APPROVAL">Restoran təsdiqi gözləyir</option><option value="CONFIRMED">Təsdiqlənib</option><option value="REJECTED">Restoran imtina edib</option><option value="COMPLETED">Tamamlanıb</option><option value="NOT_HELD">Baş tutmayıb</option><option value="NOT_HELD_DISPUTED">Etiraz edilib</option><option value="CANCELLED">Ləğv edilib</option><option value="EXPIRED">Vaxtı bitib</option><option value="REFUNDED">Geri ödənilib</option></select><button class="btn secondary" onclick="loadBookings()">Yenilə</button></div>
+      <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Rezervasiya</th><th>Müştəri</th><th>Məkan</th><th>Tarix</th><th>Status</th><th>Məbləğ</th><th>Əməliyyat</th></tr></thead><tbody id="bookingsRows"></tbody></table></div><div id="bookingsPagination" class="pagination"></div></div>
+    </section>
+
+    <section id="promos" class="section">
+      <div class="toolbar"><input id="promosSearch" placeholder="Promo kod axtar…" oninput="renderPromos()"><select id="promosStatus" onchange="renderPromos()"><option value="">Bütün statuslar</option><option value="active">Aktiv</option><option value="inactive">Deaktiv</option></select><button class="btn" onclick="openPromo()">+ Yeni promo kod</button></div>
+      <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Kod</th><th>Endirim</th><th>İstifadə</th><th>Müddət</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody id="promosRows"></tbody></table></div></div>
+    </section>
+
+    <section id="reviewReports" class="section">
+      <div class="panel"><div class="panel-head"><div><h2>Moderasiya gözləyən rəylər</h2><p>Məkan sahiblərinin şikayətlərini yoxlayın və qərar verin.</p></div><button class="btn secondary" onclick="loadReviewReports()">Yenilə</button></div><div id="reviewReportCards"></div></div>
+    </section>
+
+    <section id="audit" class="section">
+      <div class="toolbar audit-toolbar"><input id="auditSearch" placeholder="Əməliyyat, obyekt və ya istifadəçi axtar…" oninput="renderAudit()"><input id="auditFrom" type="date" aria-label="Başlanğıc tarixi" title="Başlanğıc tarixi" onchange="loadAudit(0)"><input id="auditTo" type="date" aria-label="Bitmə tarixi" title="Bitmə tarixi" onchange="loadAudit(0)"><button class="btn secondary" onclick="clearAuditFilters()">Filtri təmizlə</button></div>
+      <div class="table-card"><div class="table-scroll"><table><thead><tr><th>Əməliyyat</th><th>Obyekt</th><th>İcraçı</th><th>Tarix</th></tr></thead><tbody id="auditRows"></tbody></table></div><div id="auditPagination" class="pagination"></div></div>
+    </section>
+  </main>
+</div>
+
+<dialog id="venueDialog"><div class="dialog-body"><div class="dialog-head"><div><h2 id="venueTitle">Məkan</h2><p id="venueMeta"></p></div><button class="circle-btn" onclick="venueDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="venueContent"></div><div id="venueDialogActions" class="dialog-actions"></div></div></dialog>
+<dialog id="userDialog"><form class="dialog-body" onsubmit="saveUser(event)"><div class="dialog-head"><div><h2>İstifadəçini idarə et</h2><p id="userMeta"></p></div><button type="button" class="circle-btn" onclick="userDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="dialog-grid"><div class="field"><label>Rol</label><select id="userRole"><option>CUSTOMER</option><option>VENUE_OWNER</option><option>ADMIN</option></select></div><div class="field"><label>Status</label><select id="userStatus"><option>ACTIVE</option><option>BLOCKED</option><option>DELETED</option></select></div></div><button class="btn" type="submit">Yadda saxla</button></form></dialog>
+<dialog id="promoDialog"><form class="dialog-body" onsubmit="savePromo(event)"><div class="dialog-head"><div><h2 id="promoTitle">Yeni promo kod</h2><p>Endirim kampaniyasının şərtlərini təyin edin.</p></div><button type="button" class="circle-btn" onclick="promoDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="dialog-grid"><div class="field"><label>Kod</label><input id="promoCode" required maxlength="40"></div><div class="field"><label>Endirim növü</label><select id="promoType"><option value="PERCENT">Faiz</option><option value="FIXED">Sabit AZN</option></select></div><div class="field"><label>Endirim dəyəri</label><input id="promoValue" type="number" min="0" step=".01" required></div><div class="field"><label>Maksimum istifadə</label><input id="promoMax" type="number" min="1" placeholder="Limitsiz"></div><div class="field"><label>Başlama vaxtı</label><input id="promoFrom" type="datetime-local"></div><div class="field"><label>Bitmə vaxtı</label><input id="promoTo" type="datetime-local"></div><div class="field"><label>Status</label><select id="promoActive"><option value="true">Aktiv</option><option value="false">Deaktiv</option></select></div></div><button class="btn" type="submit">Yadda saxla</button></form></dialog>
+<dialog id="reviewsDialog"><div class="dialog-body"><div class="dialog-head"><div><h2 id="reviewsTitle">Məkan rəyləri</h2><p>Görünən rəyləri nəzərdən keçirin.</p></div><button class="circle-btn" onclick="reviewsDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="reviewsContent"></div></div></dialog>
+<dialog id="bookingDialog"><div class="dialog-body"><div class="dialog-head"><div><h2 id="bookingTitle">Rezervasiya detalları</h2><p id="bookingMeta"></p></div><button class="circle-btn" onclick="bookingDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="bookingContent"></div></div></dialog>
+<dialog id="notificationsDialog"><div class="dialog-body"><div class="dialog-head"><div><h2>Bildirişlər</h2><p>Admin hesabına gələn son bildirişlər</p></div><button class="circle-btn" onclick="notificationsDialog.close()"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="notificationsContent"></div></div></dialog>
+<div id="toast" class="toast"></div>
+
+<script>
+  let token=sessionStorage.getItem('adminToken');
+  let currentPage='overview', dashboardData={}, revenueData={}, profile={}, venues=[], pendingVenues=[], bookings=[], users=[], promos=[], auditItems=[], reviewReports=[], reviewReportTotal=0;
+  let selectedVenueId, selectedVenueDetail, selectedOnboarding, selectedUserId, selectedPromoId, auditPage=0, auditTotalPages=0;
+  let usersPage=0,usersTotalPages=0,venuesPage=0,venuesTotalPages=0,bookingsPage=0,bookingsTotalPages=0;
+  const $=id=>document.getElementById(id);
+  const venueDialog=$('venueDialog'),userDialog=$('userDialog'),promoDialog=$('promoDialog'),reviewsDialog=$('reviewsDialog'),bookingDialog=$('bookingDialog'),notificationsDialog=$('notificationsDialog');
+  const pageInfo={
+    overview:['Platformaya ümumi baxış','Əsas göstəricilər və son fəaliyyətlər'],
+    users:['İstifadəçilər','Rol və hesab statuslarını idarə edin'],
+    venues:['Məkanlar','Məkan məlumatlarını yoxlayın və təsdiqləyin'],
+    bookings:['Rezervasiyalar','Bütün rezervasiyaları bir yerdən izləyin'],
+    reviewReports:['Rəy şikayətləri','Şikayət edilmiş rəylər üzrə moderasiya qərarı verin'],
+    promos:['Promo kodlar','Endirim kampaniyalarını yaradın və yeniləyin'],
+    audit:['Audit tarixçəsi','Bütün istifadəçi və sistem əməliyyatlarının son 1 aylıq tarixçəsi']
+  };
+  const statusLabels={ACTIVE:'Aktiv',PENDING:'Təsdiq gözləyir',DRAFT:'Qaralama',REJECTED:'Rədd edilib',SUSPENDED:'Dayandırılıb',
+    REAPPROVAL_PENDING:'Dəyişiklik təsdiqi',PENDING_PAYMENT:'Ödəniş gözləyir',PENDING_APPROVAL:'Restoran təsdiqi gözləyir',CONFIRMED:'Təsdiqlənib',COMPLETED:'Tamamlanıb',NOT_HELD:'Baş tutmayıb',NOT_HELD_DISPUTED:'Etiraz edilib',CANCELLED:'Ləğv edilib',EXPIRED:'Vaxtı bitib',REFUNDED:'Geri ödənilib',
+    CUSTOMER:'Müştəri',VENUE_OWNER:'Məkan sahibi',ADMIN:'Admin',BLOCKED:'Bloklanıb',DELETED:'Silinib'};
+  async function request(path,options={}){
+    const headers={...(options.headers||{})};if(token)headers.Authorization='Bearer '+token;
+    if(options.body!==undefined){headers['Content-Type']='application/json';options.body=JSON.stringify(options.body)}
+    const response=await fetch(path,{...options,headers});const raw=await response.text();let data;
+    try{data=raw?JSON.parse(raw):null}catch{data=raw}
+    if(!response.ok)throw new Error(data?.message||data?.detail||('Xəta ('+response.status+')'));
+    return data;
+  }
+  async function login(event){
+    event.preventDefault();$('loginError').textContent='';
+    try{
+      const data=await request('/api/auth/admin/login',{method:'POST',body:{email:$('email').value.trim(),password:$('password').value}});
+      token=data.accessToken;sessionStorage.setItem('adminToken',token);showApp();boot();
+    }catch(error){$('loginError').textContent=error.message}
+  }
+  function logout(){sessionStorage.removeItem('adminToken');token=null;location.reload()}
+  function showApp(){$('login').classList.add('hidden');$('app').classList.remove('hidden')}
+  async function boot(){
+    try{
+      showApp();
+      if(!$('revenueMonth').value)$('revenueMonth').value=localMonth();
+      const [dashboardResult,profileResult,pendingResult,revenueResult]=await Promise.all([
+        request('/api/admin/dashboard'),request('/api/users/me'),request('/api/admin/venues?size=100&status=PENDING'),request('/api/admin/revenue?month='+encodeURIComponent($('revenueMonth').value)),loadNotificationCount(),loadReviewReportCount()
+      ]);
+      dashboardData=dashboardResult;revenueData=revenueResult;profile=profileResult;pendingVenues=pendingResult.content||[];setProfile();renderOverview();
+    }catch(error){if(/401|403|token|forbidden/i.test(error.message))logout();else showToast(error.message,true)}
+  }
+  function setProfile(){
+    const name=profile.fullName||'Admin';const initials=name.split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()).join('')||'A';
+    $('topName').textContent=name;$('profileName').textContent=name;$('profileEmail').textContent=profile.email||'Platforma administratoru';
+    $('topInitials').textContent=initials;$('profileInitials').textContent=initials;
+  }
+  function go(page,button){
+    currentPage=page;document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===page));
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+    $('pageTitle').textContent=pageInfo[page][0];$('pageSubtitle').textContent=pageInfo[page][1];$('sidebar').classList.remove('open');
+    ({users:loadUsers,venues:loadVenues,bookings:loadBookings,reviewReports:loadReviewReports,promos:loadPromos,audit:loadAudit}[page]||(()=>{}))();
+  }
+  async function refreshCurrent(button){
+    button=button||$('refreshButton');button.classList.add('loading');button.disabled=true;
+    try{
+      if(currentPage==='overview')await boot();
+      else await ({users:()=>loadUsers(usersPage),venues:()=>loadVenues(venuesPage),bookings:()=>loadBookings(bookingsPage),reviewReports:loadReviewReports,promos:loadPromos,audit:()=>loadAudit(auditPage)}[currentPage]||(()=>Promise.resolve()))();
+      await loadNotificationCount();showToast('Məlumatlar yeniləndi.');
+    }finally{button.classList.remove('loading');button.disabled=false}
+  }
+  function sumStatus(items,status){return (items||[]).find(x=>x.status===status)?.count||0}
+  const money=value=>Number(value||0).toLocaleString('az-AZ',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const localMonth=()=>{const now=new Date();return now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')};
+  const date=value=>value?new Intl.DateTimeFormat('az-AZ',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(value)):'—';
+  const dateTime=value=>value?new Intl.DateTimeFormat('az-AZ',{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)):'—';
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pill=status=>'<span class="pill '+(['ACTIVE','CONFIRMED','COMPLETED'].includes(status)?'green':['REJECTED','SUSPENDED','CANCELLED','EXPIRED','BLOCKED','DELETED'].includes(status)?'red':'amber')+'">'+esc(statusLabels[status]||status||'—')+'</span>';
+  const empty=cols=>'<tr><td class="empty" colspan="'+cols+'">Məlumat tapılmadı.</td></tr>';
+  function renderOverview(){
+    $('statUsers').textContent=Number(dashboardData.users||0).toLocaleString('az-AZ');
+    $('statPaid').textContent=money(dashboardData.payments?.collected);
+    $('statRefunded').textContent=money(dashboardData.payments?.refunded);
+    $('statPendingRefund').textContent=Number(dashboardData.pendingRefunds||0).toLocaleString('az-AZ');
+    renderRevenue();
+    $('overviewVenues').innerHTML=pendingVenues.slice(0,10).map(venueRow).join('')||empty(4);
+  }
+  async function loadRevenue(){try{revenueData=await request('/api/admin/revenue?month='+encodeURIComponent($('revenueMonth').value||localMonth()));renderRevenue()}catch(e){showToast(e.message,true)}}
+  function renderRevenue(){$('revenueCollected').textContent=money(revenueData.collected);$('revenueRefunded').textContent=money(revenueData.refunded);$('revenueNet').textContent=money(revenueData.net);$('revenueRows').innerHTML=(revenueData.venues||[]).map(v=>'<tr><td><span class="primary-cell">'+esc(v.venueName)+'</span><span class="secondary-cell">#'+v.venueId+'</span></td><td>'+Number(v.bookingCount||0).toLocaleString('az-AZ')+'</td><td>'+money(v.collected)+' AZN</td><td>'+money(v.refunded)+' AZN</td><td><strong>'+money(v.net)+' AZN</strong></td></tr>').join('')||empty(5)}
+  async function loadVenues(page=0){
+    try{const status=$('venuesStatus')?.value||'';const data=await request('/api/admin/venues?page='+page+'&size=20'+(status?'&status='+encodeURIComponent(status):''));venues=data.content||[];venuesPage=data.page||0;venuesTotalPages=data.totalPages||0;renderVenues()}catch(e){showToast(e.message,true)}
+  }
+  function venueRow(v){const companyRequest=v.companyEditStatus==='REQUESTED'?'<span class="secondary-cell">Şirkət məlumatı sorğusu</span>':'';return '<tr><td><span class="primary-cell">'+esc(v.name)+'</span><span class="secondary-cell">#'+v.id+'</span>'+companyRequest+'</td><td>'+esc([v.city,v.address].filter(Boolean).join(' · '))+'</td><td>'+pill(v.changeReviewStatus==='REAPPROVAL_PENDING'?'REAPPROVAL_PENDING':v.status)+'</td><td><button class="btn secondary small" onclick="openVenue('+v.id+')"><svg class="icon" style="width:14px"><use href="#i-eye"/></svg>Detallar</button> '+(v.status==='ACTIVE'?'<button class="btn ghost small" onclick="openReviews('+v.id+')">Rəylər</button>':'')+'</td></tr>'}
+  function renderVenues(){const q=($('venuesSearch')?.value||'').toLowerCase();$('venuesRows').innerHTML=venues.filter(v=>(v.name+' '+(v.city||'')+' '+(v.address||'')).toLowerCase().includes(q)).map(venueRow).join('')||empty(4);renderPagination('venuesPagination',venuesPage,venuesTotalPages,'loadVenues')}
+  async function openVenue(id){
+    try{
+      selectedVenueId=id;[selectedVenueDetail,selectedOnboarding]=await Promise.all([request('/api/admin/venues/'+id),request('/api/admin/venues/'+id+'/onboarding')]);
+      const v=selectedVenueDetail.venue;$('venueTitle').textContent=v.name;$('venueMeta').textContent=[v.city,v.address,statusLabels[v.status]||v.status].filter(Boolean).join(' · ');
+      const isChangeRequest=v.status==='PENDING'&&selectedOnboarding.criticalChangeStatus==='REAPPROVAL_PENDING';
+      const decision=detailSection('Admin qərarı','<div class="field"><label>Qərar səbəbi</label><textarea id="venueReason" rows="3" placeholder="Rədd edilirsə, sahibə göndəriləcək səbəbi yazın"></textarea></div>');
+      const companyEditRequest=selectedOnboarding.companyEditStatus==='REQUESTED'?detailSection('Şirkət məlumatlarını dəyişmək sorğusu','<div class="application-banner new"><strong>Məkan sahibinin qeydi</strong>'+esc(selectedOnboarding.companyEditRequestMessage||'Qeyd yazılmayıb')+'</div><div class="field"><label>Rədd səbəbi</label><textarea id="companyEditReason" rows="3" placeholder="Sorğunu rədd edirsinizsə, səbəbi yazın"></textarea></div><div class="dialog-actions"><button class="btn" onclick="decideCompanyEdit(true)">7 günlük icazə ver</button><button class="btn danger" onclick="decideCompanyEdit(false)">Sorğunu rədd et</button></div>'):'';
+      if(isChangeRequest){
+        $('venueContent').innerHTML='<div class="application-banner"><strong>Mövcud aktiv məkanda dəyişiklik edilib</strong>Bu yeni məkan müraciəti deyil. Aşağıda yalnız əlavə edilən, çıxarılan və dəyişdirilən məlumatlar göstərilir.</div>'+changeDetails(selectedOnboarding.changes||[])+decision;
+      }else{
+        const newBanner=v.status==='PENDING'?'<div class="application-banner new"><strong>Yeni məkan müraciəti</strong>Məkan ilk dəfə təsdiqə göndərilib. Bütün məlumatlar aşağıda göstərilir.</div>':'';
+        const directMessage=v.status==='PENDING'?'':detailSection('Məkan sahibinə mesaj','<div class="message-box"><p style="margin-top:0;color:var(--muted)">Mesaj sahibin bildirişlərində “Admin tərəfindən” başlığı ilə görünəcək. Admin hesabınızdakı telefon nömrəsi əlaqə üçün avtomatik əlavə olunur.</p><div class="field"><label>Mesaj</label><textarea id="ownerMessage" maxlength="700" placeholder="Məkan sahibinə mesajınızı yazın…"></textarea></div><button class="btn secondary" onclick="sendOwnerMessage()">Bildiriş göndər</button></div>');
+        const statusFields=v.status==='PENDING'?decision:'<input id="venueReason" type="hidden" value="">';
+        $('venueContent').innerHTML=newBanner+companyEditRequest+fullVenueDossier(selectedVenueDetail,selectedOnboarding)+directMessage+statusFields;
+      }
+      renderVenueActions(v.status);venueDialog.showModal();
+    }catch(e){showToast(e.message,true)}
+  }
+  function info(label,value){return '<div class="info"><b>'+esc(label)+'</b><span>'+esc(value===null||value===undefined||value===''?'Daxil edilməyib':value)+'</span></div>'}
+  function detailSection(title,content){return '<section class="detail-section"><h3>'+esc(title)+'</h3>'+content+'</section>'}
+  function fullVenueDossier(detail,onboarding){const v=detail.venue,restaurantMedia=(detail.media||[]).filter(x=>x.hallId==null);return '<div class="progress"><i style="width:'+Number(onboarding.completionPercent||0)+'%"></i></div><div style="font-size:12px;color:var(--muted)">Profil '+Number(onboarding.completionPercent||0)+'% hazırdır · '+esc(statusLabels[onboarding.status]||onboarding.status)+'</div>'+detailSection('Təsdiq siyahısı','<div class="check-list">'+(onboarding.requirements||[]).map(x=>'<div class="check-item '+(x.complete?'complete':'')+'">'+(x.complete?'✓ ':'○ ')+esc(x.label)+'</div>').join('')+'</div>')+(onboarding.rejectionReason?detailSection('Əvvəlki admin qeydi','<div class="booking-reason">'+esc(onboarding.rejectionReason)+'</div>'):'')+detailSection('Məkan sahibi','<div class="subcard">'+info('Ad və soyad',onboarding.ownerFullName)+info('Email',onboarding.ownerEmail)+info('Telefon',onboarding.ownerPhone)+'</div>')+detailSection('Əsas məlumatlar','<div class="subcard">'+info('Məkan adı',v.name)+info('Link',v.slug)+info('Şəhər',v.city)+info('Ünvan',v.address)+info('Koordinatlar',v.latitude+', '+v.longitude)+info('Reytinq',money(v.ratingAvg)+' ('+Number(v.ratingCount||0)+' rəy)')+info('Təsvir',detail.description)+info('İmkanlar',(detail.amenities||[]).map(x=>x.nameAz||x.code).join(', '))+'<a class="btn secondary small" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v.latitude+','+v.longitude)+'">Xəritədə aç</a></div>')+detailSection('Restoran mediası',mediaGallery(restaurantMedia,'Restoran mediası'))+detailSection('Zallar',(detail.halls?.length?detail.halls.map(h=>'<div class="subcard"><strong>'+esc(h.name)+'</strong>'+info('Tutum',h.capacityMin+'–'+h.capacityMax+' qonaq')+info('Qiymət',money(h.pricePerPerson)+' AZN / nəfər')+info('Depozit',money(h.depositPercent)+'%')+info('Status',h.active?'Aktiv':'Deaktiv')+mediaGallery((detail.media||[]).filter(x=>x.hallId===h.id),'Zal mediası')+'</div>').join(''):'<div class="subcard">Zal əlavə edilməyib.</div>'))+detailSection('Menyular',menuDetails(detail.menus||[]))+detailSection('Əlavə xidmətlər',serviceDetails(detail.services||[]))+detailSection('Şirkət məlumatları','<div class="subcard">'+info('Hüquqi ad',onboarding.legalName)+info('VÖEN',onboarding.taxId)+info('FIN',onboarding.finCode)+'</div><div class="dialog-grid">'+documentCard('Şirkət sənədi',onboarding.companyDocumentUrl)+documentCard('Şəxsiyyət vəsiqəsi',onboarding.ownerIdentityDocumentUrl)+'</div>')+detailSection('Müqavilə','<div class="subcard">'+info('Versiya',onboarding.agreementVersion)+info('Qəbul tarixi',dateTime(onboarding.agreementAcceptedAt))+info('İmzalayan',onboarding.agreementSignedBy)+'</div>')}
+  function changeDetails(changes){if(!changes.length)return '<div class="subcard error">Dəyişiklik müqayisəsi tapılmadı. Məlumatı yeniləyib yenidən yoxlayın.</div>';const labels={ADDED:'Əlavə olunub',REMOVED:'Çıxarılıb',CHANGED:'Dəyişdirilib'};return detailSection('Göndərilən dəyişikliklər',changes.map(x=>{const type=x.changeType||'CHANGED',klass=type==='ADDED'?'added':type==='REMOVED'?'removed':'';return '<article class="change-card '+klass+'"><div class="change-head"><strong>'+esc(x.section)+' · '+esc(x.field)+'</strong><span class="change-badge">'+esc(labels[type]||labels.CHANGED)+'</span></div>'+(type==='ADDED'?info('Əlavə edilən',x.newValue):type==='REMOVED'?info('Çıxarılan',x.oldValue):info('Əvvəl',x.oldValue)+info('Yeni dəyər',x.newValue))+'</article>'}).join(''))}
+  function mediaGallery(items,label){return items.length?'<div class="gallery">'+items.map((x,index)=>x.type==='VIDEO'?'<div><video src="'+esc(x.url)+'" controls preload="metadata"></video><div class="secondary-cell">'+esc(label)+' '+(index+1)+' · Video</div></div>':'<a href="'+esc(x.url)+'" target="_blank" rel="noopener"><img src="'+esc(x.thumbUrl||x.url)+'" alt="'+esc(label)+'" loading="lazy"><span>'+esc(label)+' '+(index+1)+'</span></a>').join('')+'</div>':'<div class="subcard" style="color:var(--muted)">Media əlavə edilməyib.</div>'}
+  function menuDetails(items){return items.length?items.map(m=>'<div class="subcard"><div style="display:flex;justify-content:space-between;gap:12px"><strong>'+esc(m.name)+'</strong><strong>'+money(m.pricePerPerson)+' AZN / nəfər</strong></div><p style="color:var(--muted)">'+esc(m.description||'Təsvir yoxdur')+' · Səviyyə '+esc(m.tier)+(m.popular?' · Populyar':'')+'</p>'+(m.categories||[]).map(c=>'<div><b>'+esc(c.name)+'</b><ul class="menu-list">'+(c.items||[]).map(i=>'<li>'+esc(i.name)+(i.description?' — '+esc(i.description):'')+(i.seasonal?' · mövsümi':'')+(i.customizable?' · dəyişdirilə bilər (+'+money(i.additionalPricePerPerson)+' AZN)':'')+'</li>').join('')+'</ul></div>').join('')+'</div>').join(''):'<div class="subcard" style="color:var(--muted)">Menyu əlavə edilməyib.</div>'}
+  function serviceDetails(items){return items.length?items.map(s=>'<div class="subcard"><strong>'+esc(s.name)+'</strong>'+info('Təsvir',s.description)+info('Qiymət',money(s.price)+' AZN · '+(s.priceType==='PER_PERSON'?'adam başına':'sabit'))+info('Status',s.active?'Aktiv':'Deaktiv')+'</div>').join(''):'<div class="subcard" style="color:var(--muted)">Əlavə xidmət yoxdur.</div>'}
+  function documentCard(title,url){return '<div class="subcard document-card"><div><strong>'+esc(title)+'</strong><div class="secondary-cell">'+(url?'Yüklənib':'Əlavə edilməyib')+'</div></div>'+(url?'<a class="btn secondary small" href="'+esc(url)+'" target="_blank" rel="noopener">Sənədi aç</a>':'')+'</div>'}
+  function renderVenueActions(status){const el=$('venueDialogActions');if(status==='PENDING'){el.innerHTML='<button class="btn" onclick="decideVenue(\'ACTIVE\')">Təsdiqlə / aktiv et</button><button class="btn danger" onclick="decideVenue(\'REJECTED\')">Səbəblə geri qaytar</button>';return}el.innerHTML='<div class="field" style="min-width:220px;margin:0"><label>Məkan statusu</label><select id="venueStatusSelect"><option value="ACTIVE">Aktiv</option><option value="SUSPENDED">Dayandırılıb</option><option value="REJECTED">Rədd edilib</option></select></div><button class="btn" onclick="changeVenueStatus()">Statusu yadda saxla</button>';$('venueStatusSelect').value=['ACTIVE','SUSPENDED','REJECTED'].includes(status)?status:'SUSPENDED'}
+  function changeVenueStatus(){decideVenue($('venueStatusSelect').value)}
+  async function sendOwnerMessage(){const message=$('ownerMessage').value.trim();if(!message){showToast('Mesajı yazın.',true);return}try{await request('/api/admin/venues/'+selectedVenueId+'/message',{method:'POST',body:{message}});$('ownerMessage').value='';showToast('Mesaj məkan sahibinin bildirişlərinə göndərildi.')}catch(e){showToast(e.message,true)}}
+  async function decideCompanyEdit(approved){const reason=$('companyEditReason')?.value.trim()||null;if(!approved&&!reason){showToast('Rədd səbəbini yazın.',true);return}try{await request('/api/admin/venues/'+selectedVenueId+'/company-edit-request',{method:'PATCH',body:{approved,reason}});showToast(approved?'7 günlük dəyişiklik icazəsi verildi.':'Sorğu rədd edildi.');await Promise.all([openVenue(selectedVenueId),loadVenues(venuesPage)])}catch(e){showToast(e.message,true)}}
+  async function loadPendingVenues(){const data=await request('/api/admin/venues?size=100&status=PENDING');pendingVenues=data.content||[];renderOverview()}
+  async function decideVenue(status){try{await request('/api/admin/venues/'+selectedVenueId,{method:'PATCH',body:{status,reason:$('venueReason')?.value.trim()||null}});venueDialog.close();showToast('Məkan statusu saxlanıldı.');await Promise.all([loadVenues(venuesPage),loadPendingVenues()])}catch(e){showToast(e.message,true)}}
+  async function openReviews(id){try{const data=await request('/api/reviews/venue/'+id+'?page=0&size=100'),name=venues.find(v=>v.id===id)?.name||'Məkan';$('reviewsTitle').textContent=name+' rəyləri';$('reviewsContent').innerHTML=(data.content||[]).map(r=>'<div class="subcard"><div style="color:#a47e34;font-size:17px">'+('★'.repeat(r.rating||0))+('☆'.repeat(5-(r.rating||0)))+'</div><p>'+esc(r.comment||'Şərh yazılmayıb.')+'</p><button class="btn danger small" onclick="hideReview('+r.id+','+id+')">Rəyi gizlət</button></div>').join('')||'<div class="empty">Rəy yoxdur.</div>';reviewsDialog.showModal()}catch(e){showToast(e.message,true)}}
+  async function hideReview(reviewId,venueId){try{await request('/api/admin/reviews/'+reviewId,{method:'PATCH',body:{status:'HIDDEN'}});showToast('Rəy gizlədildi.');openReviews(venueId)}catch(e){showToast(e.message,true)}}
+  function showReviewReportCount(){const badge=$('reviewReportCount'),count=Number(reviewReportTotal||0);badge.textContent=count>99?'99+':count;badge.classList.toggle('hidden',count===0)}
+  async function loadReviewReportCount(){try{const data=await request('/api/admin/reviews/reported?page=0&size=1');reviewReportTotal=Number(data.totalElements||0);showReviewReportCount()}catch{}}
+  async function loadReviewReports(){try{const data=await request('/api/admin/reviews/reported?page=0&size=100');reviewReports=data.content||[];reviewReportTotal=Number(data.totalElements||0);showReviewReportCount();renderReviewReports()}catch(e){showToast(e.message,true)}}
+  function renderReviewReports(){$('reviewReportCards').innerHTML=reviewReports.map(item=>{const r=item.review;return '<article class="subcard"><div style="display:flex;justify-content:space-between;gap:12px"><strong>'+esc(item.venueName)+'</strong><span class="secondary-cell">'+dateTime(item.reportedAt)+'</span></div><div style="color:#a47e34;font-size:17px">'+('★'.repeat(r.rating||0))+('☆'.repeat(5-(r.rating||0)))+'</div><p>'+esc(r.comment||'Şərh yazılmayıb.')+'</p><div class="booking-reason"><strong>Şikayət səbəbi</strong><br>'+esc(item.reportReason)+'</div><div class="dialog-actions"><button class="btn danger small" onclick="moderateReportedReview('+r.id+',\'HIDDEN\')">Rəyi gizlət</button><button class="btn secondary small" onclick="moderateReportedReview('+r.id+',\'VISIBLE\')">Şikayəti rədd et</button></div></article>'}).join('')||'<div class="empty">Moderasiya gözləyən rəy yoxdur.</div>'}
+  async function moderateReportedReview(id,status){try{await request('/api/admin/reviews/'+id,{method:'PATCH',body:{status}});showToast(status==='HIDDEN'?'Rəy gizlədildi.':'Şikayət rədd edildi.');loadReviewReports()}catch(e){showToast(e.message,true)}}
+  async function loadBookings(page=0){try{const data=await request('/api/admin/bookings?page='+page+'&size=20');bookings=data.content||[];bookingsPage=data.page||0;bookingsTotalPages=data.totalPages||0;renderBookings()}catch(e){showToast(e.message,true)}}
+  function renderBookings(){const q=($('bookingsSearch')?.value||'').toLowerCase(),s=$('bookingsStatus')?.value||'';const list=bookings.filter(b=>(!s||b.status===s)&&[b.bookingNumber,b.customerName,b.customerEmail,b.venueName,b.hallName].join(' ').toLowerCase().includes(q));$('bookingsRows').innerHTML=list.map(b=>'<tr><td><span class="primary-cell">'+esc(b.bookingNumber)+'</span><span class="secondary-cell">'+date(b.createdAt)+'</span></td><td>'+esc(b.customerName||'—')+'<span class="secondary-cell">'+esc(b.customerEmail||'')+'</span></td><td>'+esc(b.venueName)+'<span class="secondary-cell">'+esc(b.hallName)+'</span></td><td>'+date(b.eventDate)+'</td><td>'+pill(b.status)+'</td><td><span class="primary-cell">'+money(b.totalPrice)+' AZN</span><span class="secondary-cell">'+money(b.paidAmount)+' AZN ödənilib</span></td><td><button class="btn '+(b.cancelReason?'danger':'secondary')+' small" onclick="openBooking('+b.id+')">'+(b.cancelReason?'Ləğv səbəbi':'Detallar')+'</button></td></tr>').join('')||empty(7);renderPagination('bookingsPagination',bookingsPage,bookingsTotalPages,'loadBookings')}
+  function openBooking(id){const b=bookings.find(x=>x.id===id);if(!b)return;$('bookingTitle').textContent=b.bookingNumber;$('bookingMeta').textContent=[b.venueName,b.hallName,date(b.eventDate)].join(' · ');$('bookingContent').innerHTML=(b.cancelReason?detailSection('Ləğv səbəbi','<div class="booking-reason">'+esc(b.cancelReason)+'</div>'):'')+detailSection('Müştəri','<div class="subcard">'+info('Ad və soyad',b.customerName)+info('Email',b.customerEmail)+info('Telefon',b.customerPhone)+'</div>')+detailSection('Rezervasiya','<div class="subcard">'+info('Status',statusLabels[b.status]||b.status)+info('Tədbir tarixi',date(b.eventDate))+info('Qonaq sayı',b.guestCount)+info('Məkan',b.venueName)+info('Zal',b.hallName)+info('Müştəri qeydi',b.customerNote)+info('Yaradılma tarixi',dateTime(b.createdAt))+info('Təsdiq üçün son vaxt',dateTime(b.expiresAt))+'</div>')+detailSection('Məbləğlər','<div class="subcard">'+info('Zal',money(b.hallPrice)+' AZN')+info('Xidmətlər',money(b.servicesPrice)+' AZN')+info('Menyu dəyişikliyi',money(b.menuCustomizationPrice)+' AZN')+info('Endirim',money(b.discountAmount)+' AZN')+info('Ümumi',money(b.totalPrice)+' AZN')+info('Depozit',money(b.depositAmount)+' AZN')+info('Ödənilib',money(b.paidAmount)+' AZN')+'</div>')+(b.menuName?detailSection('Seçilmiş menyu','<div class="subcard"><strong>'+esc(b.menuName)+'</strong>'+(b.removedMenuItems?.length?info('Çıxarılanlar',b.removedMenuItems.join(', ')):'')+(b.addedMenuItems?.length?info('Əlavə edilənlər',b.addedMenuItems.join(', ')):'')+'</div>'):'')+(b.extraServices?.length?detailSection('Əlavə xidmətlər',b.extraServices.map(x=>'<div class="subcard"><strong>'+esc(x.name)+'</strong>'+info('Miqdar',x.quantity)+info('Vahid qiyməti',money(x.unitPrice)+' AZN')+info('Cəm',money(x.totalPrice)+' AZN')+'</div>').join('')):'');bookingDialog.showModal()}
+  async function loadUsers(page=0){try{const data=await request('/api/admin/users?page='+page+'&size=20');users=data.content||[];usersPage=data.page||0;usersTotalPages=Math.ceil(Number(data.totalElements||0)/20);renderUsers()}catch(e){showToast(e.message,true)}}
+  function renderUsers(){const q=($('usersSearch')?.value||'').toLowerCase(),r=$('usersRole')?.value||'';$('usersRows').innerHTML=users.filter(u=>(!r||u.role===r)&&((u.fullName||'')+' '+u.email).toLowerCase().includes(q)).map(u=>'<tr><td><span class="primary-cell">'+esc(u.fullName||'Adsız istifadəçi')+'</span><span class="secondary-cell">'+esc(u.email)+'</span></td><td>'+esc(statusLabels[u.role]||u.role)+'</td><td>'+pill(u.status)+'</td><td>'+date(u.createdAt)+'</td><td><button class="btn secondary small" onclick="openUser('+u.id+')">İdarə et</button></td></tr>').join('')||empty(5);renderPagination('usersPagination',usersPage,usersTotalPages,'loadUsers')}
+  function openUser(id){const u=users.find(x=>x.id===id);selectedUserId=id;$('userMeta').textContent=(u.fullName||'Adsız istifadəçi')+' · '+u.email;$('userRole').value=u.role;$('userStatus').value=u.status;userDialog.showModal()}
+  async function saveUser(event){event.preventDefault();try{await request('/api/admin/users/'+selectedUserId,{method:'PATCH',body:{role:$('userRole').value,status:$('userStatus').value}});userDialog.close();showToast('İstifadəçi yeniləndi.');loadUsers(usersPage)}catch(e){showToast(e.message,true)}}
+  async function loadPromos(){try{const data=await request('/api/admin/promos?page=0&size=100');promos=data.content||[];renderPromos()}catch(e){showToast(e.message,true)}}
+  function renderPromos(){const q=($('promosSearch')?.value||'').toLowerCase(),s=$('promosStatus')?.value||'';$('promosRows').innerHTML=promos.filter(p=>p.code.toLowerCase().includes(q)&&(!s||String(p.active)===(s==='active'?'true':'false'))).map(p=>'<tr><td><span class="primary-cell">'+esc(p.code)+'</span></td><td>'+money(p.discountValue)+(p.discountType==='PERCENT'?'%':' AZN')+'</td><td>'+Number(p.usedCount||0)+' / '+(p.maxUses??'∞')+'</td><td>'+date(p.validFrom)+' – '+date(p.validTo)+'</td><td>'+pill(p.active?'ACTIVE':'SUSPENDED')+'</td><td><button class="btn secondary small" onclick="openPromo('+p.id+')">Redaktə et</button> <button class="btn '+(p.active?'danger':'secondary')+' small" onclick="togglePromo('+p.id+','+(!p.active)+')">'+(p.active?'Deaktiv et':'Aktiv et')+'</button></td></tr>').join('')||empty(6)}
+  function localDate(value){if(!value)return '';const d=new Date(value);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
+  function openPromo(id){const p=promos.find(x=>x.id===id);selectedPromoId=id||null;$('promoTitle').textContent=p?'Promo kodu redaktə et':'Yeni promo kod';$('promoCode').value=p?.code||'';$('promoType').value=p?.discountType||'PERCENT';$('promoValue').value=p?.discountValue??'';$('promoMax').value=p?.maxUses??'';$('promoFrom').value=localDate(p?.validFrom);$('promoTo').value=localDate(p?.validTo);$('promoActive').value=String(p?.active??true);promoDialog.showModal()}
+  async function savePromo(event){event.preventDefault();try{const body={code:$('promoCode').value.trim().toUpperCase(),discountType:$('promoType').value,discountValue:Number($('promoValue').value),maxUses:$('promoMax').value?Number($('promoMax').value):null,validFrom:$('promoFrom').value?new Date($('promoFrom').value).toISOString():null,validTo:$('promoTo').value?new Date($('promoTo').value).toISOString():null,active:$('promoActive').value==='true'};await request(selectedPromoId?'/api/admin/promos/'+selectedPromoId:'/api/admin/promos',{method:selectedPromoId?'PUT':'POST',body});promoDialog.close();showToast('Promo kod saxlanıldı.');loadPromos()}catch(e){showToast(e.message,true)}}
+  async function togglePromo(id,active){try{await request('/api/admin/promos/'+id+'/active',{method:'PATCH',body:{active}});showToast(active?'Promo kod aktiv edildi.':'Promo kod deaktiv edildi.');await loadPromos()}catch(e){showToast(e.message,true)}}
+  function renderPagination(id,page,totalPages,loader){const el=$(id),pages=Math.max(Number(totalPages||0),1),from=Math.max(0,Math.min(page-2,pages-5)),to=Math.min(pages,from+5);let html='<button class="page-button" '+(page===0?'disabled':'')+' onclick="'+loader+'('+(page-1)+')">‹</button>';for(let i=from;i<to;i++)html+='<button class="page-button '+(i===page?'active':'')+'" onclick="'+loader+'('+i+')">'+(i+1)+'</button>';html+='<button class="page-button" '+(page>=pages-1?'disabled':'')+' onclick="'+loader+'('+(page+1)+')">›</button><span style="margin-left:8px;color:var(--muted);font-size:11px">20 qeyd / səhifə</span>';el.innerHTML=html}
+  async function loadAudit(page=0){try{const from=$('auditFrom')?.value||'',to=$('auditTo')?.value||'',params=new URLSearchParams({page:String(page),size:'20'});if(from)params.set('from',from);if(to)params.set('to',to);const data=await request('/api/admin/audit?'+params);auditItems=data.content||[];auditPage=data.page||0;auditTotalPages=data.totalPages||0;renderAudit()}catch(e){showToast(e.message,true)}}
+  function renderAudit(){const q=($('auditSearch')?.value||'').toLowerCase();$('auditRows').innerHTML=auditItems.filter(a=>(a.action+' '+a.entityType+' '+(a.entityName||'')+' '+(a.actorName||'')).toLowerCase().includes(q)).map(a=>'<tr><td><span class="primary-cell">'+esc(a.action)+'</span></td><td><span class="primary-cell">'+esc(a.entityName||a.entityType)+'</span><span class="secondary-cell">'+esc(a.entityType)+'</span></td><td>'+esc(a.actorName||'Sistem')+'</td><td>'+dateTime(a.createdAt)+'</td></tr>').join('')||empty(4);renderPagination('auditPagination',auditPage,auditTotalPages,'loadAudit')}
+  function clearAuditFilters(){$('auditFrom').value='';$('auditTo').value='';$('auditSearch').value='';loadAudit(0)}
+  async function loadNotificationCount(){try{const data=await request('/api/notifications/unread-count'),count=Number(data.count||0),badge=$('notificationCount');badge.textContent=count>99?'99+':count;badge.classList.toggle('hidden',count===0)}catch{}}
+  function openNotificationAction(type){if(type==='REVIEW_REPORTED'){notificationsDialog.close();go('reviewReports')}else if(type==='COMPANY_EDIT_REQUEST'){notificationsDialog.close();go('venues')}}
+  async function openNotifications(){try{const data=await request('/api/notifications?page=0&size=30'),items=data.content||[];$('notificationsContent').innerHTML=items.length?items.map(n=>'<article class="notification-item '+(n.read?'':'unread')+'"><strong>'+esc(n.title||'Bildiriş')+'</strong><p>'+esc(n.body||'')+'</p><time>'+dateTime(n.createdAt)+'</time>'+(n.type==='REVIEW_REPORTED'?'<div><button class="btn secondary small" style="margin-top:10px" onclick="openNotificationAction(\'REVIEW_REPORTED\')">Şikayətə bax</button></div>':n.type==='COMPANY_EDIT_REQUEST'?'<div><button class="btn secondary small" style="margin-top:10px" onclick="openNotificationAction(\'COMPANY_EDIT_REQUEST\')">Məkanlara bax</button></div>':'')+'</article>').join(''):'<div class="empty">Yeni bildiriş yoxdur.</div>';notificationsDialog.showModal();if(items.some(n=>!n.read)){await request('/api/notifications/read-all',{method:'POST'});loadNotificationCount()}}catch(e){showToast(e.message,true)}}
+  function showToast(message,bad=false){const el=$('toast');el.textContent=message;el.className='toast show'+(bad?' bad':'');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>el.className='toast',3200)}
+  if(token)boot();
+</script>
+</body>
+</html>

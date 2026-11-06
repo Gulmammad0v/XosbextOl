@@ -1,0 +1,11 @@
+**
+!gradle/
+!gradle/**
+!gradlew
+!build.gradle
+!settings.gradle
+!src/
+!src/**
+!mobile/
+!mobile/assets/
+!mobile/assets/brand-logo.png

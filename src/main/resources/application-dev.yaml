@@ -1,0 +1,22 @@
+spring:
+  datasource.password: ${DB_PASSWORD:toyapp_dev}
+  rabbitmq.password: ${RABBIT_PASSWORD:toyapp_dev}
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties.mail.smtp.auth: ${SMTP_AUTH:false}
+    properties.mail.smtp.starttls.enable: ${SMTP_TLS:false}
+app:
+  jwt.secret: ${JWT_SECRET:development-only-jwt-secret-minimum-32-bytes}
+  otp.max-per-hour: ${OTP_MAX_PER_HOUR:50}
+  notification.email-from: ${EMAIL_FROM:noreply@xosbextol.local}
+  payment:
+    provider: stub
+    stub-auto-success: true
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET:development-only-webhook-secret}
+  storage:
+    access-key: ${S3_ACCESS_KEY:toyapp}
+    secret-key: ${S3_SECRET_KEY:toyapp_dev_storage}
+    initialize-bucket: ${S3_INITIALIZE_BUCKET:true}

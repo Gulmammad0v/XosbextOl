@@ -1,0 +1,100 @@
+# Local configuration and credentials
+.env
+.env.*
+!**/.env.example
+*firebase-adminsdk*.json
+firebase-service-account*.json
+**/google-services.json
+**/GoogleService-Info.plist
+**/service-account*.json
+**/credentials.json
+**/secrets/
+.aws/
+.ssh/
+application-local.yaml
+application-local.yml
+application-local.properties
+application-secret.yaml
+application-secret.yml
+application-secret.properties
+
+# Signing keys and certificates
+*.jks
+*.keystore
+*.p8
+*.p12
+*.pfx
+*.key
+*.pem
+*.mobileprovision
+
+# Gradle and JVM build output
+.gradle/
+.gradle-apk-*/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.class
+hs_err_pid*
+
+# Runtime logs and temporary files
+logs/
+backups/
+*.log
+*.dump
+*.dump.gz
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+*.tmp
+*.bak
+*.swp
+*~
+
+# Node, Expo, tests and generated bundles
+node_modules/
+.expo/
+coverage/
+dist/
+*.tsbuildinfo
+*.apk
+*.aab
+*.ipa
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

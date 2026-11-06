@@ -1,0 +1,107 @@
+{
+  "expo": {
+    "name": "Xoşbəxt Ol",
+    "slug": "xosbext-ol",
+    "scheme": "xosbextol",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "az.xosbextol.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "scheme": "com.googleusercontent.apps.932943221965-1bbck20dl90jubqmtq1gd3g2otsvj1jc",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSFaceIDUsageDescription": "Daxil olmaq üçün Face ID istifadə olunur"
+      }
+    },
+    "android": {
+      "package": "az.xosbextol.mobile",
+      "googleServicesFile": "./google-services.json",
+      "scheme": [
+        "xosbextol",
+        "az.xosbextol.mobile"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#FAF8F2",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.USE_BIOMETRIC"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Xoşbəxt Ol hesabına biometrik giriş üçün Face ID istifadə olunur."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Məkan şəkillərini yükləmək üçün qalereyaya giriş lazımdır.",
+          "cameraPermission": "Məkan şəkli çəkmək üçün kameraya giriş lazımdır."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FAF8F2"
+        }
+      ],
+      "expo-web-browser",
+      "@maplibre/maplibre-react-native",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Dəqiq ünvanı seçmək üçün cari məkanınıza giriş lazımdır."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      "expo-notifications",
+      "expo-font",
+      "expo-status-bar",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": ["az", "en", "ru"]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "837981e5-94c8-4f0f-a5f3-5d2314b6724f"
+      }
+    },
+    "owner": "gulmammad0vv"
+  }
+}

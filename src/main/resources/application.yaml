@@ -1,0 +1,106 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: xosbextOl
+  profiles:
+    active:
+      - dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/toyapp}
+    username: ${DB_USER:toyapp}
+    password: ${DB_PASSWORD:toyapp_dev}
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.jdbc.batch_size: 50
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      repositories:
+        enabled: false
+  rabbitmq:
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template.mandatory: true
+    listener.simple.default-requeue-rejected: false
+    host: ${RABBIT_HOST:localhost}
+    username: ${RABBIT_USER:toyapp}
+    password: ${RABBIT_PASSWORD:toyapp_dev}
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties.mail.smtp.auth: ${SMTP_AUTH:true}
+    properties.mail.smtp.starttls.enable: ${SMTP_TLS:true}
+    properties.mail.smtp.connectiontimeout: 5000
+    properties.mail.smtp.timeout: 10000
+    properties.mail.smtp.writetimeout: 10000
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 21MB
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
+server:
+  port: ${PORT:8090}
+logging:
+  file:
+    path: ${LOG_PATH:logs}
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.app.xosbextol: ${LOG_LEVEL_APP:INFO}
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:WARN}
+app:
+  booking:
+    approval-hours: 24
+  auth:
+    device-retention-days: 30
+    device-limit-token-minutes: 5
+    device-cleanup-cron: "0 30 3 * * *"
+  audit:
+    cleanup-cron: "0 0 3 * * *"
+  jwt:
+    secret: ${JWT_SECRET}
+    access-ttl-minutes: 15
+    refresh-ttl-days: 30
+  review:
+    open-after-days: 1
+    window-days: 60
+  otp:
+    ttl-seconds: 120
+    challenge-ttl-seconds: 600
+    max-attempts: 5
+    max-per-hour: 5
+  social:
+    google-client-ids: ${GOOGLE_CLIENT_IDS:932943221965-0ecr30u1a8brec78mek5vqablm28ltut.apps.googleusercontent.com,932943221965-1bbck20dl90jubqmtq1gd3g2otsvj1jc.apps.googleusercontent.com}
+  payment:
+    provider: ${PAYMENT_PROVIDER:http}
+    stub-auto-success: false
+    base-url: ${PAYMENT_BASE_URL:}
+    api-key: ${PAYMENT_API_KEY:}
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET}
+    return-url: ${PAYMENT_RETURN_URL:xosbextol://bookings}
+  notification:
+    email-from: ${EMAIL_FROM:noreply@example.com}
+    firebase-enabled: ${FIREBASE_ENABLED:false}
+    firebase-credentials: ${FIREBASE_CREDENTIALS:}
+  storage:
+    endpoint: ${S3_ENDPOINT:http://localhost:9000}
+    region: ${S3_REGION:us-east-1}
+    access-key: ${S3_ACCESS_KEY:}
+    secret-key: ${S3_SECRET_KEY:}
+    bucket: ${S3_BUCKET:toyapp-media}
+    cdn-base-url: ${CDN_URL:http://localhost:9000/toyapp-media}
+management:
+  endpoints.web.exposure.include: health,info,prometheus
+  endpoint.health.show-details: when-authorized
+springdoc:
+  swagger-ui.path: /swagger-ui.html
